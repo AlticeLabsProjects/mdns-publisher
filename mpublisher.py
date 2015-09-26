@@ -14,9 +14,16 @@ from __future__ import absolute_import
 
 import logging
 
-import avahi
 import dbus
 import exceptions
+
+
+# If the system-provided library isn't available, use a bundled copy instead.
+# Necessary for CentOS 6/7 where there's no available "avahi-python" package.
+try:
+    import avahi
+except ImportError:
+    import _avahi as avahi
 
 
 # From "/usr/include/avahi-common/defs.h"

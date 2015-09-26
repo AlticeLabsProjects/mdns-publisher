@@ -37,3 +37,6 @@ to have it publish its own CNAMEs.
 
 Besides a working Avahi daemon, this service requires the Python bindings for both Avahi and D-BUS
 (eg. as provided by the `python-avahi` and `python-dbus` packages in Debian).
+
+Installing the system-provided Python bindings for Avahi is optional but recommended. As a fallback,
+this package provides a copy for Linux distributions where they are not readily available (eg. CentOS 6 and 7).
