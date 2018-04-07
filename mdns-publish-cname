@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# mdns-publish-cname - Publish CNAMEs pointing to the local host over Avahi/mDNS.
+#
+# Copyright (c) 2018, Carlos Rodrigues
+#
+
+
+from mpublisher import cname_service as command
+
+
+if __name__ == "__main__":
+    command.main()
+
+
+# vim: set expandtab ts=4 sw=4:

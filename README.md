@@ -10,16 +10,16 @@ these names are usable from MacOS X and Windows too.
 
 ## Running
 
-Pass (one or more) CNAMEs as command-line arguments to `publish-cname.py`:
+Pass (one or more) CNAMEs as command-line arguments to `mdns-publish-cname`:
 
 ```
-$ ./publish-cname.py name01.local name02.local
+$ mdns-publish-cname name01.local name02.local
 ```
 
 Names are restricted to the `.local` domain, but can have arbitrary sub-domains of your choosing:
 
 ```
-$ ./publish-cname.py name01.local name02.local name03.mysubdomain.local
+$ mdns-publish-cname name01.local name02.local name03.mysubdomain.local
 ```
 
 If the server running `publish-cname.py` is being announced over mDNS as `myserver.local`, all of

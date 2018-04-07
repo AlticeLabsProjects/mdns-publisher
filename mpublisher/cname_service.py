@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# publish-cname.py - publish CNAMEs pointing to the local host over Avahi/mDNS.
+# cname_service.py - Publish CNAMEs pointing to the local host over Avahi/mDNS.
 #
 # Copyright (c) 2014, SAPO
 #
 
 
 from __future__ import print_function
+
+
+__all__ = ["main"]
+
 
 import sys
 import os
@@ -20,8 +24,7 @@ from getopt import getopt, GetoptError
 from textwrap import TextWrapper
 from time import sleep
 
-from daemonize import daemonize
-from mpublisher import AvahiPublisher
+from .mpublisher import AvahiPublisher
 
 
 log = logging.getLogger("mdns-publisher")
@@ -103,6 +106,52 @@ def parse_args():
             logname = value.strip()
 
     return (ttl, force, verbose, daemon, logname, cnames)
+
+
+def daemonize():
+    """Run the process in the background as a daemon."""
+
+    try:
+        # First fork to return control to the shell...
+        pid = os.fork()
+    except OSError as e:
+        raise Exception("%s [%d]" % (e.strerror, e.errno))
+
+    if pid:
+        # Quickly terminate the parent process...
+        os._exit(0)
+
+    os.setsid()
+
+    try:
+        # Second fork to prevent zombies...
+        pid = os.fork()
+    except OSError as e:
+        raise Exception("%s [%d]" % (e.strerror, e.errno))
+
+    if pid:
+        # Quickly terminate the parent process...
+        os._exit(0)
+
+    # To make sure we don't block an unmount in the future, in case
+    # the current directory resides on a mounted filesystem...
+    os.chdir("/")
+
+    # Sanitize permissions...
+    os.umask(0o022)
+
+    # Redirect the standard file descriptors to "/dev/null"...
+    f = open(os.devnull, "r")
+    os.dup2(f.fileno(), sys.stdin.fileno())
+    assert sys.stdin.fileno() == 0
+
+    f = open(os.devnull, "r")
+    os.dup2(f.fileno(), sys.stdout.fileno())
+    assert sys.stdout.fileno() == 1
+
+    f = open(os.devnull, "r")
+    os.dup2(f.fileno(), sys.stderr.fileno())
+    assert sys.stderr.fileno() == 2
 
 
 def handle_signals(publisher, signum, frame):
