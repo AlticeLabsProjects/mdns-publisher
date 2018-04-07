@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # mpublisher.py - Avahi/mDNS name publisher.
@@ -12,6 +11,10 @@ from __future__ import division
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
+
+__all__ = ["AvahiPublisher"]
+
+
 import logging
 
 import dbus
@@ -23,7 +26,7 @@ import exceptions
 try:
     import avahi
 except ImportError:
-    import _avahi as avahi
+    from . import _avahi as avahi
 
 
 # From "/usr/include/avahi-common/defs.h"
