@@ -8,6 +8,14 @@ helper for named virtual-hosts in development environments.
 Since Avahi is compatible with Apple's [Bonjour](https://www.apple.com/support/bonjour),
 these names are usable from MacOS X and Windows too.
 
+## Installing
+
+This package can be installed into your system (or virtualenv) by running:
+
+```
+$ python setup.py install
+```
+
 ## Running
 
 Pass (one or more) CNAMEs as command-line arguments to `mdns-publish-cname`:

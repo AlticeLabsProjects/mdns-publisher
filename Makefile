@@ -4,3 +4,6 @@ all:
 clean:
 	find . -name '*.pyc' -type f -delete
 	find . -name __pycache__ -type d -delete
+	rm -rf build dist *.egg-info
+
+.PHONY: all install clean
