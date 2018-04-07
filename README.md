@@ -1,6 +1,6 @@
 # Avahi/mDNS CNAME publisher
 
-This service publishes CNAME records pointing to the local host over
+This service/library publishes CNAME records pointing to the local host over
 [multicast DNS](http://www.multicastdns.org) using the [Avahi](http://www.avahi.org/wiki/AboutAvahi)
 daemon found in all major Linux distributions. Useful as a poor-man's service discovery or as a
 helper for named virtual-hosts in development environments.
@@ -30,13 +30,13 @@ Run `publish-cname.py` with no arguments to find out about the available options
 
 ## Integrating
 
-The `AvahiPublisher` class as contained in `mpublisher.py` can be integrated into your application
+The `AvahiPublisher` class as contained in `mpublisher` module can be integrated into your application
 to have it publish its own CNAMEs.
 
 ## Dependencies
 
-Besides a working Avahi daemon, this service requires the Python bindings for both Avahi and D-BUS
-(eg. as provided by the `python-avahi` and `python-dbus` packages in Debian).
+Besides a working Avahi daemon, this service requires the `dbus-python` bindings which, in turn, requires
+the development packages for D-Bus and D-Bus Glib (eg. `dbus-devel` and `dbus-glib-devel` in CentOS 7).
 
 Installing the system-provided Python bindings for Avahi is optional but recommended. As a fallback,
 this package provides a copy for Linux distributions where they are not readily available (eg. CentOS 6 and 7).
