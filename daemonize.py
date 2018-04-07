@@ -7,13 +7,6 @@
 #
 
 
-# Make an eventual port to Python 3.x easier...
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
-from __future__ import absolute_import
-
-
 import sys
 import os
 
@@ -48,7 +41,7 @@ def daemonize():
     os.chdir("/")
 
     # Sanitize permissions...
-    os.umask(022)
+    os.umask(0o022)
 
     # Redirect the standard file descriptors to "/dev/null"...
     f = open(os.devnull, "r")

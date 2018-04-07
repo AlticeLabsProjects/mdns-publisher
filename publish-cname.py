@@ -8,9 +8,6 @@
 
 
 from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
-from __future__ import absolute_import
 
 import sys
 import os
@@ -109,7 +106,7 @@ def parse_args():
 def handle_signals(publisher, signum, frame):
     """Unpublish all mDNS records and exit cleanly."""
 
-    signame = next(v for v, k in signal.__dict__.iteritems() if k == signum)
+    signame = next(v for v, k in signal.__dict__.items() if k == signum)
     logging.debug("Cleaning up on %s...", signame)
     publisher.__del__()
 

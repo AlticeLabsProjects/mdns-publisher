@@ -6,19 +6,17 @@
 #
 
 
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
-from __future__ import absolute_import
-
-
 __all__ = ["AvahiPublisher"]
 
 
 import logging
 
 import dbus
-import exceptions
+
+try:
+    from exceptions import NameError
+except ImportError:  # ...not needed on Python 3.x.
+    pass
 
 
 # If the system-provided library isn't available, use a bundled copy instead.
@@ -56,7 +54,7 @@ class AvahiPublisher(object):
         """Remove all published records from mDNS."""
 
         try:
-            for group in self.published.itervalues():
+            for group in self.published.values():
                 group.Reset()
         except dbus.exceptions.DBusException as e:  # ...don't spam on broken connection.
             if e.get_dbus_name() != "org.freedesktop.DBus.Error.ServiceUnknown":
@@ -67,12 +65,12 @@ class AvahiPublisher(object):
         """Convert an FQDN into the mDNS data record format."""
 
         data = []
-        for part in fqdn.encode("ascii").split("."):
+        for part in fqdn.encode("ascii").split(b"."):
             if part:
-                data.append(chr(len(part)))
+                data.append(chr(len(part)).encode("ascii"))
                 data.append(part)
 
-        return ("".join(data) + "\0").encode("ascii")
+        return b"".join(data) + b"\0"
 
 
     def count(self):
@@ -90,7 +88,7 @@ class AvahiPublisher(object):
                                                    name.encode("ascii"), avahi.PROTO_UNSPEC,
                                                    dbus.UInt32(0))
             return response[2].decode("ascii")
-        except (exceptions.NameError, dbus.exceptions.DBusException):
+        except (NameError, dbus.exceptions.DBusException):
             return None
 
 
