@@ -28,6 +28,10 @@ Or, you can install the latest stable release from PyPI::
 
     pip install mdns-publisher
 
+**Note:** If you're using Python 2.7 and you get errors installing ``dbus-python``, you may need to upgrade your ``pip`` version::
+
+    pip install --upgrade pip
+
 RUNNING
 -------
 
