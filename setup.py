@@ -7,15 +7,18 @@
 #
 
 
+import os
+
 from setuptools import setup
 
 
 manifest = {
     "name": "mdns-publisher",
-    "version": "1.0",
+    "version": "0.9.1",
     "description": "Publish CNAMEs pointing to the local host over Avahi/mDNS",
     "author": "Carlos Rodrigues",
     "author_email": "cefrodrigues@gmail.com",
+    "url": "https://github.com/carlosefr/mdns-publisher",
     "packages": [
         "mpublisher",
         "mpublisher._avahi"
@@ -25,6 +28,20 @@ manifest = {
     ],
     "scripts": [
         "mdns-publish-cname",
+    ],
+    "license": "MIT",
+    "keywords": "Avahi mDNS CNAME",
+    "long_description": open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
+    "classifiers": [
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Console",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Utilities",
+        "Intended Audience :: System Administrators",
+        "Intended Audience :: Developers",
     ],
 }
 
