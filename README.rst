@@ -21,19 +21,23 @@ INSTALLATION
 
 This package can be installed from source by running::
 
-    $ python setup.py build
-    $ python setup.py install
+    python setup.py build
+    python setup.py install
+
+Or, you can install the latest stable release from PyPI::
+
+    pip install mdns-publisher
 
 RUNNING
 -------
 
 Pass (one or more) CNAMEs as command-line arguments to ``mdns-publish-cname``::
 
-    $ mdns-publish-cname name01.local name02.local
+    mdns-publish-cname name01.local name02.local
 
 Names must use the ``.local`` domain but can have arbitrary sub-domains::
 
-    $ mdns-publish-cname name01.local name02.local name03.mysubdomain.local
+    mdns-publish-cname name01.local name02.local name03.mysubdomain.local
 
 If the server running ``mdns-publish-cname`` is being announced over mDNS as ``myserver.local``, all of these names will be answered by Avahi as CNAMEs for ``myserver.local``, regardless of any sub-domains they might have. They remain available as long as ``mdns-publish-cname`` is running.
 
