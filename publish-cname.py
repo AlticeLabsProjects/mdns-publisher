@@ -12,7 +12,6 @@ from __future__ import print_function
 import sys
 import os
 import logging
-import logging.handlers
 import re
 import signal
 import functools
@@ -23,6 +22,9 @@ from time import sleep
 
 from daemonize import daemonize
 from mpublisher import AvahiPublisher
+
+
+log = logging.getLogger("mdns-publisher")
 
 
 # Default Time-to-Live for mDNS records, in seconds...
@@ -107,7 +109,7 @@ def handle_signals(publisher, signum, frame):
     """Unpublish all mDNS records and exit cleanly."""
 
     signame = next(v for v, k in signal.__dict__.items() if k == signum)
-    logging.debug("Cleaning up on %s...", signame)
+    log.debug("Cleaning up on %s...", signame)
     publisher.__del__()
 
     # Avahi needs time to forget us...
@@ -117,25 +119,27 @@ def handle_signals(publisher, signum, frame):
 
 
 def main():
-    (ttl, force, verbose, daemon, log, cnames) = parse_args()
+    (ttl, force, verbose, daemon, logfile, cnames) = parse_args()
 
     # Since an eventual log file must support external log rotation, we must do this the hard way...
     format = logging.Formatter("%(asctime)s: %(levelname)s [%(process)d]: %(message)s")
-    handler = logging.handlers.WatchedFileHandler(log) if log else logging.StreamHandler(sys.stderr)
+    handler = logging.handlers.WatchedFileHandler(logfile) if logfile else logging.StreamHandler(sys.stderr)
     handler.setFormatter(format)
-    logger = logging.getLogger()
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG if verbose else logging.INFO)
+    logging.getLogger().addHandler(handler)
+
+    # Leaving the root logger with the default level, and setting it in our own logging hierarchy
+    # instead, prevents accidental triggering of third-party logging, just like $DEITY intended...
+    log.setLevel(logging.DEBUG if verbose else logging.INFO)
 
     # This must be done after initializing the logger, so that an eventual log file gets created in
     # the right place (the user will assume that relative paths start from the current directory)...
     if daemon:
         daemonize()
 
-    logging.info("Avahi/mDNS publisher starting...")
+    log.info("Avahi/mDNS publisher starting...")
 
     if force:
-        logging.info("Forcing CNAME publishing without collision checks")
+        log.info("Forcing CNAME publishing without collision checks")
 
     # The publisher needs to be initialized in the loop, to handle disconnects...
     publisher = None
@@ -152,13 +156,13 @@ def main():
             for cname in cnames:
                 status = publisher.publish_cname(cname, force)
                 if not status:
-                    logging.error("Failed to publish '%s'", cname)
+                    log.error("Failed to publish '%s'", cname)
                     continue
 
             if publisher.count() == len(cnames):
-                logging.info("All CNAMEs published")
+                log.info("All CNAMEs published")
             else:
-                logging.warning("%d out of %d CNAMEs published", publisher.count(), len(cnames))
+                log.warning("%d out of %d CNAMEs published", publisher.count(), len(cnames))
 
         # CNAMEs will exist while this service is kept alive,
         # but we don't actually need to do anything useful...

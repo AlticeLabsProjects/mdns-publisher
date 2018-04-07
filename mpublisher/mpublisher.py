@@ -27,6 +27,9 @@ except ImportError:
     from . import _avahi as avahi
 
 
+log = logging.getLogger("mdns-publisher.%s" % __name__)
+
+
 # From "/usr/include/avahi-common/defs.h"
 AVAHI_DNS_CLASS_IN = 0x01
 AVAHI_DNS_TYPE_CNAME = 0x05
@@ -47,7 +50,7 @@ class AvahiPublisher(object):
         self.record_ttl = record_ttl
         self.published = {}
 
-        logging.debug("Avahi mDNS publisher for: %s", self.hostname)
+        log.debug("Avahi mDNS publisher for: %s", self.hostname)
 
 
     def __del__(self):
@@ -97,16 +100,16 @@ class AvahiPublisher(object):
 
         if not force:
             # Unfortunately, this takes a few seconds in the expected case...
-            logging.info("Checking for '%s' availability...", cname)
+            log.info("Checking for '%s' availability...", cname)
             current_owner = self.resolve(cname)
 
             if current_owner:
                 if current_owner != self.hostname:
-                    logging.error("DNS entry '%s' is already owned by '%s'", cname, current_owner)
+                    log.error("DNS entry '%s' is already owned by '%s'", cname, current_owner)
                     return False
 
                 # We may have discovered ourselves, but this is not a fatal problem...
-                logging.warning("DNS entry '%s' is already being published by this machine", cname)
+                log.warning("DNS entry '%s' is already being published by this machine", cname)
 
         entry_group_proxy = self.bus.get_object(avahi.DBUS_NAME, self.server.EntryGroupNew())
         group = dbus.Interface(entry_group_proxy, avahi.DBUS_INTERFACE_ENTRY_GROUP)
