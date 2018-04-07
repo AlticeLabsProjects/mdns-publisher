@@ -1,0 +1,13 @@
+[flake8]
+max-line-length = 120
+
+# E303: number of vertical lines (ignored because of class methods)
+# E731: use of lambda expressions (better for sorting keys)
+# E127: visual indentation (aligment of function parameters)
+ignore = E303, E731, E127
+
+exclude =
+    */.git/*
+    */__pycache__/*,
+    */migrations/*
+    mpublisher/_avahi
