@@ -47,6 +47,8 @@ If the server running ``mdns-publish-cname`` is being announced over mDNS as ``m
 
 Run ``mdns-publish-cname`` with no arguments to find out about the available options.
 
+**Note:** You can find a sample ``mdns-publish-cname.service`` file for ``systemd`` in the source repository.
+
 INTEGRATING
 -----------
 
