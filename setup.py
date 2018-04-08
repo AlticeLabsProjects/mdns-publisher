@@ -14,7 +14,7 @@ from setuptools import setup
 
 manifest = {
     "name": "mdns-publisher",
-    "version": "0.9.1",
+    "version": "0.9.2",
     "description": "Publish CNAMEs pointing to the local host over Avahi/mDNS",
     "author": "Carlos Rodrigues",
     "author_email": "cefrodrigues@gmail.com",
@@ -43,6 +43,7 @@ manifest = {
         "Intended Audience :: System Administrators",
         "Intended Audience :: Developers",
     ],
+    "zip_safe": False,
 }
 
 
