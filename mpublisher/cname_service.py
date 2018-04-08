@@ -129,7 +129,7 @@ def handle_signals(publisher, signum, frame):
     """Unpublish all mDNS records and exit cleanly."""
 
     signame = next(v for v, k in signal.__dict__.items() if k == signum)
-    log.debug("Cleaning up on %s...", signame)
+    log.info("Exiting on %s...", signame)
     publisher.__del__()
 
     # Avahi needs time to forget us...
@@ -174,6 +174,9 @@ def main():
 
     while True:
         if not publisher or not publisher.available():
+            if publisher:
+                log.info("Lost connection with Avahi. Reconnecting...")
+
             publisher = AvahiPublisher(args.ttl)
 
             # To make sure records disappear immediately on exit, clean up properly...
