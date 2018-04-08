@@ -90,7 +90,7 @@ class AvahiPublisher(object):
             response = self.server.ResolveHostName(avahi.IF_UNSPEC, avahi.PROTO_UNSPEC,
                                                    name.encode("ascii"), avahi.PROTO_UNSPEC,
                                                    dbus.UInt32(0))
-            return response[2].decode("ascii")
+            return response[2]
         except (NameError, dbus.exceptions.DBusException):
             return None
 
