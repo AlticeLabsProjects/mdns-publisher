@@ -16,6 +16,8 @@ __all__ = ["main"]
 import sys
 import os
 import logging
+import logging.handlers
+import syslog
 import re
 import signal
 import functools
@@ -71,9 +73,9 @@ def parse_args():
     parser.add_argument("-v", "--verbose", action="store_true", help="Produce extra output for debugging purposes.")
     parser.add_argument("-d", "--daemon", action="store_true", help="Run the publishing service in the background.")
     parser.add_argument("-f", "--force", action="store_true", help="Do not check for availability before publishing.")
-    parser.add_argument("-l", "--log", action="store", metavar="file", help="Log messages into the specified file.")
-    parser.add_argument("-t", "--ttl", action="store", metavar="secs", type=positive_int_arg, default=DEFAULT_DNS_TTL,
-                                       help="TTL for published records, in seconds. (Default: %ds)" % DEFAULT_DNS_TTL)
+    parser.add_argument("-l", "--log", metavar="log", help="Log messages into 'syslog' or the specified log file.")
+    parser.add_argument("-t", "--ttl", metavar="ttl", type=positive_int_arg, default=DEFAULT_DNS_TTL,
+                                       help="TTL for published records, in seconds. (Default: %d)" % DEFAULT_DNS_TTL)
 
     return parser.parse_args()
 
@@ -140,10 +142,18 @@ def handle_signals(publisher, signum, frame):
 def main():
     args = parse_args()
 
-    # Since an eventual log file must support external log rotation, we must do this the hard way...
-    format = logging.Formatter("%(asctime)s: %(levelname)s [%(process)d]: %(message)s")
-    handler = logging.handlers.WatchedFileHandler(args.log) if args.log else logging.StreamHandler(sys.stderr)
-    handler.setFormatter(format)
+    if not args.log:
+        handler = logging.StreamHandler(sys.stderr)
+        format_string = "%(levelname)s: %(message)s"
+    elif args.log.lower() in ("syslog", "/dev/log"):
+        facility = syslog.LOG_DAEMON if args.daemon else syslog.LOG_USER
+        handler = logging.handlers.SysLogHandler(address="/dev/log", facility=facility)
+        format_string = os.path.basename(sys.argv[0]) + "[%(process)d]: %(levelname)s: %(message)s"
+    else:
+        handler = logging.handlers.WatchedFileHandler(os.path.realpath(os.path.abspath(args.log)))
+        format_string = "%(asctime)s: %(levelname)s [%(process)d]: %(message)s"
+
+    handler.setFormatter(logging.Formatter(format_string))
     logging.getLogger().addHandler(handler)
 
     # Leaving the root logger with the default level, and setting it in our own logging hierarchy
