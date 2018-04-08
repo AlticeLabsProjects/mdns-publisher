@@ -58,6 +58,8 @@ class AvahiPublisher(object):
         try:
             for group in self.published.values():
                 group.Reset()
+
+            self.bus.close()
         except dbus.exceptions.DBusException:  # ...don't really care, cleaning up.
             pass
 
