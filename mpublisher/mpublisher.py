@@ -41,14 +41,15 @@ class AvahiPublisher(object):
     def __init__(self, record_ttl=60):
         """Initialize the publisher with fixed record TTL value (in seconds)."""
 
-        self.bus = dbus.SystemBus()
+        self.record_ttl = record_ttl
+        self.published = {}
+
+        self.bus = dbus.SystemBus(private=True)
 
         path_server_proxy = self.bus.get_object(avahi.DBUS_NAME, avahi.DBUS_PATH_SERVER)
         self.server = dbus.Interface(path_server_proxy, avahi.DBUS_INTERFACE_SERVER)
 
         self.hostname = self.server.GetHostNameFqdn()
-        self.record_ttl = record_ttl
-        self.published = {}
 
         log.debug("Avahi mDNS publisher for: %s", self.hostname)
 
@@ -59,9 +60,8 @@ class AvahiPublisher(object):
         try:
             for group in self.published.values():
                 group.Reset()
-        except dbus.exceptions.DBusException as e:  # ...don't spam on broken connection.
-            if e.get_dbus_name() != "org.freedesktop.DBus.Error.ServiceUnknown":
-                raise
+        except dbus.exceptions.DBusException:  # ...don't really care, cleaning up.
+            pass
 
 
     def _fqdn_to_rdata(self, fqdn):
@@ -135,12 +135,9 @@ class AvahiPublisher(object):
         """Check if the connection to Avahi is still available."""
 
         try:
-            # This is just a dummy call to test the connection...
             self.server.GetVersionString()
-        except dbus.exceptions.DBusException as e:
-            if e.get_dbus_name() != "org.freedesktop.DBus.Error.ServiceUnknown":
-                raise
-
+        except dbus.exceptions.DBusException as e:  # ...don't really care, just checking.
+            log.debug("Avahi is unavailable: %s", e.get_dbus_name())
             return False
 
         return True
