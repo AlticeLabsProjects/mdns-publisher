@@ -35,7 +35,6 @@ log = logging.getLogger("mdns-publisher")
 DEFAULT_DNS_TTL = 60
 
 
-
 def positive_int_arg(value):
     """Helper type (for argparse) to validate and return positive integer argument."""
 

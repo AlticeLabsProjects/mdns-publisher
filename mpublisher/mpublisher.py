@@ -10,14 +10,12 @@ __all__ = ["AvahiPublisher"]
 
 
 import logging
-
 import dbus
 
 try:
     from exceptions import NameError
 except ImportError:  # ...not needed on Python 3.x.
     pass
-
 
 # If the system-provided library isn't available, use a bundled copy instead.
 # Necessary for CentOS 6/7 where there's no available "avahi-python" package.
